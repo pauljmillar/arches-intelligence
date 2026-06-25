@@ -20,7 +20,14 @@ export default function App() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [market, setMarket] = useState('Germany North');
+  const [aboutOpen, setAboutOpen] = useState(false);
   const threadRef = useRef(null);
+
+  useEffect(() => {
+    function onKey(e) { if (e.key === 'Escape') setAboutOpen(false); }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   useEffect(() => {
     if (threadRef.current) {
@@ -47,6 +54,7 @@ export default function App() {
         <div className="nav-logo"><Logo size={36} /></div>
         <div className="nav-wordmark">Arches Intelligence</div>
         <div className="nav-spacer" />
+        <button className="about-btn" onClick={() => setAboutOpen(true)}>About</button>
         <select
           className="market-selector"
           value={market}
@@ -155,6 +163,28 @@ export default function App() {
           </div>
         )}
       </div>
+
+      {aboutOpen && (
+        <div className="modal-overlay" onClick={() => setAboutOpen(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} role="dialog" aria-labelledby="about-title">
+            <button className="modal-close" onClick={() => setAboutOpen(false)} aria-label="Close">×</button>
+            <h2 id="about-title" className="modal-title">About this prototype</h2>
+            <p>
+              The purpose of this demo is <em>not</em> to argue that this particular RAG approach is unique.
+              Rather, it is to show that a group under my direction builds prototypes quickly and tests
+              them out before choosing the best to move forward to productionalize and to trial phase.
+            </p>
+            <p>
+              That said, my teams have built agentic chat tools that source from embeddings in vector
+              databases as well as MCP servers, as well as a text-to-SQL data source.
+            </p>
+            <div className="modal-footer">
+              <span className="modal-author">— Paul Millar</span>
+              <button className="modal-cta" onClick={() => setAboutOpen(false)}>Got it</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
